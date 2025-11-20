@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: 'Smart City Dashboards'
+    orgId: 1
+    folder: 'Smart City'
+    folderUid: 'smart-city'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/json

@@ -1,0 +1,15 @@
+Sujet 11 : Conception d’une plateforme intelligente de services urbains basée sur le Big Data et l’Intelligence Artificielle
+
+ Problématique:
+•	Comment concevoir une plateforme intelligente capable d’intégrer, analyser et exploiter efficacement les données massives générées par les infrastructures urbaines afin d’améliorer la qualité des services offerts aux citoyens (mobilité, sécurité, propreté, énergie, etc.) dans un contexte de ville intelligente (Smart City) ?
+
+Méthodologie :
+•	Déploiement d’une architecture distribuée hybride (Docker/Kubernetes sur serveur local ou cloud AWS/GCP) pour l’intégration de modules d’analyse et de traitement des données urbaines (trafic, énergie, propreté, sécurité, etc.).
+•	Collecte et génération de données simulées issues de capteurs urbains connectés (IoT) : données de trafic routier, température, pollution, consommation d’eau et d’électricité, plaintes citoyennes.
+•	Traitement des flux de données en temps réel avec Spark Streaming ou Apache Flink, et stockage en base NoSQL (MongoDB, Cassandra) pour analyse et visualisation.
+•	Application de modèles d’IA supervisés et non supervisés (clustering, classification, prédiction) pour anticiper les congestions, incidents ou besoins de maintenance.
+•	Évaluation des performances : latence de traitement, précision des prédictions, robustesse de l’architecture, charge système.
+•	Développement d’un tableau de bord interactif (avec Dash, Kibana ou Grafana) pour visualiser les indicateurs clés et permettre l’aide à la décision.
+•	Proposition d’un cadre de gouvernance des données urbaines (qualité, sécurité, accessibilité) et recommandations pour une extension multisectorielle de la plateforme.
+
+•   concentre toi sur la Mobilité & transport urbain (trafic, bus, taxi, optimisation des trajets, etc.)

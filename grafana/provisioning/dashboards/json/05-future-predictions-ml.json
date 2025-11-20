@@ -1,0 +1,1021 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "infinity"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "Speed (km/h)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 6,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 20
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 40
+              }
+            ]
+          },
+          "unit": "velocitykmh"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Confidence"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [10, 10]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": ["mean", "min", "max", "lastNotNull"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "infinity"
+          },
+          "format": "json",
+          "method": "GET",
+          "queryType": "json",
+          "refId": "A",
+          "url": "http://api:8000/api/v1/predict/traffic/future?zone_id=${zone}&horizon_hours=24&interval_minutes=30",
+          "parser": "backend",
+          "data": "",
+          "root_selector": "predictions",
+          "columns": [
+            {
+              "text": "Time",
+              "selector": "timestamp",
+              "type": "timestamp"
+            },
+            {
+              "text": "Predicted Speed",
+              "selector": "predicted_speed_kmh",
+              "type": "number"
+            },
+            {
+              "text": "Confidence",
+              "selector": "confidence",
+              "type": "number"
+            },
+            {
+              "text": "Congestion Level",
+              "selector": "congestion_level",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "title": "24-Hour Traffic Speed Predictions with ML",
+      "type": "timeseries",
+      "description": "Machine Learning predictions for traffic speed over the next 24 hours"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "infinity"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          },
+          "mappings": [
+            {
+              "options": {
+                "low": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "Low"
+                },
+                "medium": {
+                  "color": "yellow",
+                  "index": 1,
+                  "text": "Medium"
+                },
+                "high": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "High"
+                },
+                "severe": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Severe"
+                }
+              },
+              "type": "value"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 2,
+      "options": {
+        "calculate": false,
+        "cellGap": 2,
+        "cellValues": {
+          "unit": "velocitykmh"
+        },
+        "color": {
+          "exponent": 0.5,
+          "fill": "dark-orange",
+          "mode": "scheme",
+          "reverse": false,
+          "scale": "exponential",
+          "scheme": "RdYlGn",
+          "steps": 64
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        },
+        "filterValues": {
+          "le": 1e-9
+        },
+        "legend": {
+          "show": true
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "tooltip": {
+          "show": true,
+          "yHistogram": false
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "reverse": false,
+          "axisLabel": "Time Ahead (hours)"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "infinity"
+          },
+          "format": "json",
+          "method": "GET",
+          "queryType": "json",
+          "refId": "A",
+          "url": "http://api:8000/api/v1/predict/traffic/future?zone_id=${zone}&horizon_hours=48&interval_minutes=60",
+          "parser": "backend",
+          "data": "",
+          "root_selector": "predictions",
+          "columns": [
+            {
+              "text": "Hour",
+              "selector": "hours_ahead",
+              "type": "number"
+            },
+            {
+              "text": "Speed",
+              "selector": "predicted_speed_kmh",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "title": "48-Hour Congestion Heatmap Forecast",
+      "type": "heatmap",
+      "description": "Heatmap showing predicted congestion levels for the next 48 hours"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "infinity"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "low": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "Fluide"
+                },
+                "medium": {
+                  "color": "yellow",
+                  "index": 1,
+                  "text": "Modéré"
+                },
+                "high": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Chargé"
+                },
+                "severe": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "Bloqué"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "orange",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "id": 3,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "fields": "/^Congestion Index$/",
+          "calcs": ["lastNotNull"]
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "text": {
+          "titleSize": 16,
+          "valueSize": 40
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "infinity"
+          },
+          "format": "json",
+          "method": "GET",
+          "queryType": "json",
+          "refId": "A",
+          "url": "http://api:8000/api/v1/predict/traffic/future?zone_id=${zone}&horizon_hours=1&interval_minutes=60",
+          "parser": "backend",
+          "data": "",
+          "root_selector": "predictions[0]",
+          "columns": [
+            {
+              "text": "Congestion Index",
+              "selector": "congestion_score",
+              "type": "number"
+            },
+            {
+              "text": "Level",
+              "selector": "congestion_level",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "title": "Next Hour Congestion Prediction",
+      "type": "gauge",
+      "description": "ML prediction for congestion level in the next hour"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "infinity"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Zone"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Speed (km/h)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "velocitykmh"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "gradient"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 20
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 30
+                    },
+                    {
+                      "color": "green",
+                      "value": 40
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Congestion"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text",
+                  "mode": "basic"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "low": {
+                        "color": "green",
+                        "text": "Low"
+                      },
+                      "medium": {
+                        "color": "yellow",
+                        "text": "Medium"
+                      },
+                      "high": {
+                        "color": "orange",
+                        "text": "High"
+                      },
+                      "severe": {
+                        "color": "red",
+                        "text": "Severe"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Confidence"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "lcd-gauge",
+                  "mode": "gradient"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "infinity"
+          },
+          "format": "json",
+          "method": "GET",
+          "queryType": "json",
+          "refId": "A",
+          "url": "http://api:8000/api/v1/predict/traffic/multizone?zones=zone-1,zone-2,zone-3,zone-4,zone-5",
+          "parser": "backend",
+          "data": "",
+          "root_selector": "zones",
+          "columns": [
+            {
+              "text": "Zone",
+              "selector": "zone_name",
+              "type": "string"
+            },
+            {
+              "text": "Speed (km/h)",
+              "selector": "predicted_speed_kmh",
+              "type": "number"
+            },
+            {
+              "text": "Congestion",
+              "selector": "congestion_level",
+              "type": "string"
+            },
+            {
+              "text": "Confidence",
+              "selector": "confidence",
+              "type": "number"
+            },
+            {
+              "text": "Model",
+              "selector": "model_used",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "title": "Multi-Zone Traffic Predictions",
+      "type": "table",
+      "description": "Current predictions for all city zones using ML models"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "infinity"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Severity"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "low": {
+                        "color": "yellow",
+                        "text": "Low"
+                      },
+                      "medium": {
+                        "color": "orange",
+                        "text": "Medium"
+                      },
+                      "high": {
+                        "color": "red",
+                        "text": "High"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Time"
+          }
+        ]
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "infinity"
+          },
+          "format": "json",
+          "method": "GET",
+          "queryType": "json",
+          "refId": "A",
+          "url": "http://api:8000/api/v1/predict/anomalies?zone_id=all&threshold=0.7",
+          "parser": "backend",
+          "data": "",
+          "root_selector": "anomalies",
+          "columns": [
+            {
+              "text": "Zone",
+              "selector": "zone_id",
+              "type": "string"
+            },
+            {
+              "text": "Time",
+              "selector": "predicted_time",
+              "type": "timestamp"
+            },
+            {
+              "text": "Hours Ahead",
+              "selector": "hours_ahead",
+              "type": "number"
+            },
+            {
+              "text": "Type",
+              "selector": "anomaly_type",
+              "type": "string"
+            },
+            {
+              "text": "Severity",
+              "selector": "severity",
+              "type": "string"
+            },
+            {
+              "text": "Predicted Speed",
+              "selector": "predicted_speed",
+              "type": "number"
+            },
+            {
+              "text": "Action",
+              "selector": "recommended_action",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "title": "Predicted Traffic Anomalies",
+      "type": "table",
+      "description": "ML-detected anomalies predicted for the next 2 hours"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "infinity"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            }
+          },
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 34
+      },
+      "id": 6,
+      "options": {
+        "displayLabels": ["name", "percent"],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "infinity"
+          },
+          "format": "json",
+          "method": "GET",
+          "queryType": "json",
+          "refId": "A",
+          "url": "http://api:8000/api/v1/predict/route/optimal?origin_zone=zone-1&destination_zone=zone-3&modes=car,bus,bike,walk",
+          "parser": "backend",
+          "data": "",
+          "root_selector": "routes",
+          "columns": [
+            {
+              "text": "Mode",
+              "selector": "mode",
+              "type": "string"
+            },
+            {
+              "text": "Duration",
+              "selector": "duration_minutes",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "title": "Optimal Route Comparison",
+      "type": "piechart",
+      "description": "Comparison of predicted travel times by transport mode"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "infinity"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 25
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 34
+      },
+      "id": 7,
+      "options": {
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "fields": "",
+          "calcs": ["lastNotNull"]
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {
+          "titleSize": 14,
+          "valueSize": 24
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "infinity"
+          },
+          "format": "json",
+          "method": "GET",
+          "queryType": "json",
+          "refId": "A",
+          "url": "http://api:8000/api/v1/predict/traffic/future?zone_id=${zone}&horizon_hours=24&interval_minutes=60",
+          "parser": "backend",
+          "data": "",
+          "root_selector": "model_info",
+          "columns": [
+            {
+              "text": "Model Accuracy",
+              "selector": "accuracy",
+              "type": "number"
+            },
+            {
+              "text": "Type",
+              "selector": "type",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "title": "ML Model Performance",
+      "type": "stat",
+      "description": "Current accuracy of the ML prediction models"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "tags": [
+    "predictions",
+    "ml",
+    "traffic",
+    "future"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "zone-1",
+          "value": "zone-1"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Zone",
+        "multi": false,
+        "name": "zone",
+        "options": [
+          {
+            "selected": true,
+            "text": "zone-1",
+            "value": "zone-1"
+          },
+          {
+            "selected": false,
+            "text": "zone-2",
+            "value": "zone-2"
+          },
+          {
+            "selected": false,
+            "text": "zone-3",
+            "value": "zone-3"
+          },
+          {
+            "selected": false,
+            "text": "zone-4",
+            "value": "zone-4"
+          },
+          {
+            "selected": false,
+            "text": "zone-5",
+            "value": "zone-5"
+          }
+        ],
+        "query": "zone-1,zone-2,zone-3,zone-4,zone-5",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now+24h"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Future Traffic Predictions with ML",
+  "uid": "ml-future-predictions",
+  "version": 1,
+  "weekStart": ""
+}

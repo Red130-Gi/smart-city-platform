@@ -1,0 +1,222 @@
+services:
+  # Message Broker
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - smart-city-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - smart-city-net
+
+  # Database
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: smartcity123
+      MONGO_INITDB_DATABASE: smart_city
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - smart-city-net
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: smart_city
+      POSTGRES_PASSWORD: smartcity123
+      POSTGRES_DB: smart_city_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - smart-city-net
+
+  # Cache
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - smart-city-net
+
+  # Spark
+  spark-master:
+    image: spark:3.5.7-scala2.12-java17-python3-ubuntu
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
+    volumes:
+      - ./data-pipeline:/opt/spark-apps
+    networks:
+      - smart-city-net
+
+  spark-worker:
+    image: spark:3.5.7-scala2.12-java17-python3-ubuntu
+    container_name: spark-worker
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077", "--cores", "2", "--memory", "2G"]
+    networks:
+      - smart-city-net
+
+  # MinIO (S3-compatible storage)
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - smart-city-net
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=smartcity123
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel,redis-datasource,yesoreyeram-infinity-datasource
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+    networks:
+      - smart-city-net
+
+  # API Gateway
+  api:
+    build: ./api
+    container_name: smart-city-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://smart_city:smartcity123@postgres:5432/smart_city_db
+      - MONGODB_URL=mongodb://admin:smartcity123@mongodb:27017
+      - REDIS_URL=redis://redis:6379
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+      - kafka
+    volumes:
+      - ./api:/app
+    networks:
+      - smart-city-net
+
+  # Data Generator Service
+  data-generator:
+    build: ./data-generation
+    container_name: data-generator
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=smart_city_db
+      - POSTGRES_USER=smart_city
+      - POSTGRES_PASSWORD=smartcity123
+      - POSTGRES_PORT=5432
+      - GENERATION_INTERVAL=5
+      - MAX_SPEED_KMH=70
+    depends_on:
+      - kafka
+      - postgres
+    restart: unless-stopped
+    volumes:
+      - ./data-generation:/app
+    networks:
+      - smart-city-net
+
+  ml-models-runner:
+    build: ./ml-models
+    container_name: ml-models-runner
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=smart_city_db
+      - POSTGRES_USER=smart_city
+      - POSTGRES_PASSWORD=smartcity123
+      - POSTGRES_PORT=5432
+      - MONGODB_URL=mongodb://admin:smartcity123@mongodb:27017
+      - REDIS_URL=redis://redis:6379
+      - LOOKBACK_HOURS=24
+      - FORECAST_HORIZON_MIN=5
+      - FORECAST_HORIZON_HOURS=168
+      - LOOP_SECONDS=60
+      - MODEL_TYPE=ensemble
+      - ENABLE_FUTURE_PREDICTION=true
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+    volumes:
+      - ./ml-models:/app
+      - ./models:/models
+      - ./data:/data
+    networks:
+      - smart-city-net
+
+volumes:
+  mongo-data:
+  postgres-data:
+  redis-data:
+  minio-data:
+  grafana-data:
+
+networks:
+  smart-city-net:
+    driver: bridge

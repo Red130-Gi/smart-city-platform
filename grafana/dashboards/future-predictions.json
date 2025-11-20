@@ -1,0 +1,666 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "future-predictions",
+    "title": "Future Traffic Predictions",
+    "tags": ["prediction", "forecast", "traffic"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1,
+        "title": "Traffic Speed Forecast",
+        "type": "graph",
+        "targets": [
+          {
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  $__time(target_datetime),\n  predicted_speed_kmh as value,\n  road_id as metric\nFROM\n  predictions\nWHERE\n  $__timeFilter(target_datetime)\n  AND road_id IN ($road)\nORDER BY target_datetime",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": ["predicted_speed_kmh"],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "predictions",
+            "timeColumn": "target_datetime",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "xaxis": {
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "velocitykmh",
+            "label": "Speed (km/h)",
+            "logBase": 1,
+            "max": null,
+            "min": "0",
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        },
+        "lines": true,
+        "fill": 1,
+        "linewidth": 2,
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "thresholds": [
+          {
+            "colorMode": "critical",
+            "fill": true,
+            "line": true,
+            "op": "lt",
+            "value": 20,
+            "yaxis": "left"
+          }
+        ],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "transparent": false,
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "hiddenSeries": false,
+        "legend": {
+          "avg": true,
+          "current": true,
+          "max": true,
+          "min": true,
+          "show": true,
+          "total": false,
+          "values": true,
+          "alignAsTable": true
+        },
+        "percentage": false,
+        "nullPointMode": "connected"
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 2,
+        "title": "Congestion Level Prediction",
+        "type": "stat",
+        "targets": [
+          {
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  road_id,\n  congestion_level,\n  COUNT(*) as count\nFROM\n  predictions\nWHERE\n  target_datetime >= NOW()\n  AND target_datetime <= NOW() + INTERVAL '24 hours'\n  AND road_id IN ($road)\nGROUP BY road_id, congestion_level\nORDER BY road_id, congestion_level",
+            "refId": "A",
+            "select": [],
+            "table": "predictions",
+            "timeColumn": "target_datetime",
+            "where": []
+          }
+        ],
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "fields": "",
+            "calcs": ["lastNotNull"]
+          },
+          "orientation": "auto",
+          "textMode": "auto",
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "auto"
+        },
+        "pluginVersion": "10.0.0",
+        "mappings": [
+          {
+            "type": "value",
+            "options": {
+              "low": {
+                "color": "green",
+                "index": 0,
+                "text": "Low Congestion"
+              },
+              "medium": {
+                "color": "yellow",
+                "index": 1,
+                "text": "Medium Congestion"
+              },
+              "high": {
+                "color": "orange",
+                "index": 2,
+                "text": "High Congestion"
+              },
+              "severe": {
+                "color": "red",
+                "index": 3,
+                "text": "Severe Congestion"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 8
+        },
+        "id": 3,
+        "title": "Prediction Confidence",
+        "type": "bargauge",
+        "targets": [
+          {
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  road_id,\n  AVG(confidence) * 100 as confidence_percent\nFROM\n  predictions\nWHERE\n  target_datetime >= NOW()\n  AND target_datetime <= NOW() + INTERVAL '24 hours'\n  AND road_id IN ($road)\nGROUP BY road_id\nORDER BY road_id",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "orientation": "horizontal",
+          "displayMode": "gradient",
+          "showUnfilled": true,
+          "valueMode": "color",
+          "reduceOptions": {
+            "values": false,
+            "fields": "",
+            "calcs": ["lastNotNull"]
+          }
+        },
+        "pluginVersion": "10.0.0",
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [
+            {
+              "color": "red",
+              "value": null
+            },
+            {
+              "color": "yellow",
+              "value": 50
+            },
+            {
+              "color": "green",
+              "value": 75
+            }
+          ]
+        },
+        "unit": "percent",
+        "min": 0,
+        "max": 100
+      },
+      {
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        },
+        "id": 4,
+        "title": "Hourly Forecast Heatmap",
+        "type": "heatmap",
+        "targets": [
+          {
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  $__time(target_datetime),\n  EXTRACT(HOUR FROM target_datetime) as hour,\n  predicted_speed_kmh as value\nFROM\n  predictions\nWHERE\n  $__timeFilter(target_datetime)\n  AND road_id = '$road'\nORDER BY target_datetime",
+            "refId": "A"
+          }
+        ],
+        "dataFormat": "timeseries",
+        "options": {
+          "calculate": false,
+          "calculation": {
+            "xBuckets": {
+              "mode": "size",
+              "value": "1h"
+            },
+            "yBuckets": {
+              "mode": "count",
+              "value": "24"
+            }
+          },
+          "color": {
+            "mode": "scheme",
+            "scheme": "Spectral",
+            "steps": 128,
+            "reverse": true,
+            "min": 0,
+            "max": 70
+          },
+          "exemplars": {
+            "color": "rgba(255,0,255,0.7)"
+          },
+          "filterValues": {
+            "le": 1e-9
+          },
+          "rowsFrame": {
+            "layout": "auto"
+          },
+          "showValue": "never",
+          "tooltip": {
+            "show": true,
+            "yHistogram": false
+          },
+          "yAxis": {
+            "axisPlacement": "left",
+            "axisLabel": "Hour of Day",
+            "reverse": false,
+            "min": "0",
+            "max": "23"
+          }
+        },
+        "pluginVersion": "10.0.0",
+        "reverseYBuckets": false,
+        "xAxis": {
+          "show": true
+        },
+        "xBucketSize": null,
+        "yAxis": {
+          "show": true,
+          "format": "short",
+          "decimals": null,
+          "splitFactor": null
+        },
+        "yBucketBound": "auto"
+      },
+      {
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        },
+        "id": 5,
+        "title": "Route Recommendations",
+        "type": "table",
+        "targets": [
+          {
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  route_id,\n  total_distance_km,\n  estimated_duration_minutes,\n  average_speed_kmh,\n  congestion_level,\n  alternative_reason,\n  created_at\nFROM\n  route_recommendations\nWHERE\n  created_at >= NOW() - INTERVAL '1 hour'\nORDER BY created_at DESC\nLIMIT 20",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "10.0.0",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto",
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "color": {
+              "mode": "thresholds"
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "congestion_level"
+              },
+              "properties": [
+                {
+                  "id": "custom.displayMode",
+                  "value": "color-background"
+                },
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "low": {
+                          "color": "green",
+                          "text": "Low"
+                        },
+                        "medium": {
+                          "color": "yellow",
+                          "text": "Medium"
+                        },
+                        "high": {
+                          "color": "orange",
+                          "text": "High"
+                        },
+                        "severe": {
+                          "color": "red",
+                          "text": "Severe"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "total_distance_km"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "km"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "estimated_duration_minutes"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "m"
+                },
+                {
+                  "id": "decimals",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "average_speed_kmh"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "velocitykmh"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "gridPos": {
+          "h": 6,
+          "w": 8,
+          "x": 0,
+          "y": 26
+        },
+        "id": 6,
+        "title": "Model Performance",
+        "type": "gauge",
+        "targets": [
+          {
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  AVG(ABS(predicted_speed_kmh - actual_speed_kmh)) as mae\nFROM\n  prediction_validations\nWHERE\n  validation_time >= NOW() - INTERVAL '24 hours'",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "orientation": "auto",
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "text": {}
+        },
+        "pluginVersion": "10.0.0",
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [
+            {
+              "color": "green",
+              "value": null
+            },
+            {
+              "color": "yellow",
+              "value": 5
+            },
+            {
+              "color": "red",
+              "value": 10
+            }
+          ]
+        },
+        "unit": "velocitykmh",
+        "min": 0,
+        "max": 20,
+        "title": "Mean Absolute Error (MAE)"
+      },
+      {
+        "gridPos": {
+          "h": 6,
+          "w": 8,
+          "x": 8,
+          "y": 26
+        },
+        "id": 7,
+        "title": "Prediction Horizon Distribution",
+        "type": "piechart",
+        "targets": [
+          {
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  CASE\n    WHEN prediction_horizon_hours <= 1 THEN '< 1h'\n    WHEN prediction_horizon_hours <= 6 THEN '1-6h'\n    WHEN prediction_horizon_hours <= 24 THEN '6-24h'\n    WHEN prediction_horizon_hours <= 72 THEN '1-3d'\n    ELSE '> 3d'\n  END as horizon_group,\n  COUNT(*) as count\nFROM\n  predictions\nWHERE\n  created_at >= NOW() - INTERVAL '24 hours'\nGROUP BY horizon_group\nORDER BY horizon_group",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "pieType": "donut",
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          },
+          "legend": {
+            "displayMode": "list",
+            "placement": "right",
+            "showLegend": true,
+            "values": ["percent", "value"]
+          },
+          "displayLabels": ["name", "percent"],
+          "reduceOptions": {
+            "values": false,
+            "fields": "",
+            "calcs": ["lastNotNull"]
+          }
+        },
+        "pluginVersion": "10.0.0"
+      },
+      {
+        "gridPos": {
+          "h": 6,
+          "w": 8,
+          "x": 16,
+          "y": 26
+        },
+        "id": 8,
+        "title": "API Response Times",
+        "type": "timeseries",
+        "targets": [
+          {
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  $__time(timestamp),\n  endpoint,\n  response_time_ms as value\nFROM\n  api_metrics\nWHERE\n  $__timeFilter(timestamp)\n  AND endpoint IN ('/predict/traffic', '/recommend/route', '/forecast')\nORDER BY timestamp",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          },
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true,
+            "calcs": ["mean", "max"]
+          }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "linear",
+              "barAlignment": 0,
+              "lineWidth": 1,
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "spanNulls": false,
+              "showPoints": "never",
+              "pointSize": 5,
+              "stacking": {
+                "mode": "none",
+                "group": "A"
+              },
+              "axisPlacement": "auto",
+              "axisLabel": "",
+              "axisColorMode": "text",
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "axisCenteredZero": false,
+              "hideFrom": {
+                "tooltip": false,
+                "viz": false,
+                "legend": false
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "color": {
+              "mode": "palette-classic"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": []
+        },
+        "pluginVersion": "10.0.0"
+      }
+    ],
+    "refresh": "30s",
+    "schemaVersion": 38,
+    "style": "dark",
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "road-1",
+            "value": "road-1"
+          },
+          "datasource": {
+            "type": "postgres",
+            "uid": "${datasource}"
+          },
+          "definition": "SELECT DISTINCT road_id FROM predictions",
+          "hide": 0,
+          "includeAll": true,
+          "label": "Road",
+          "multi": true,
+          "name": "road",
+          "options": [],
+          "query": "SELECT DISTINCT road_id FROM predictions",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "version": 1,
+    "weekStart": ""
+  }
+}
