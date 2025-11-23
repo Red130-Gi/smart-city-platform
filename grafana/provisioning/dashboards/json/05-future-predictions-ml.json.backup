@@ -180,7 +180,7 @@
           ]
         }
       ],
-      "title": "24-Hour Traffic Speed Predictions with ML - Abidjan",
+      "title": "24-Hour Traffic Speed Predictions with ML",
       "type": "timeseries",
       "description": "Machine Learning predictions for traffic speed over the next 24 hours"
     },
@@ -304,7 +304,7 @@
           ]
         }
       ],
-      "title": "48-Hour Congestion Heatmap Forecast - Abidjan",
+      "title": "48-Hour Congestion Heatmap Forecast",
       "type": "heatmap",
       "description": "Heatmap showing predicted congestion levels for the next 48 hours"
     },
@@ -326,17 +326,17 @@
                 "medium": {
                   "color": "yellow",
                   "index": 1,
-                  "text": "Modéré"
+                  "text": "Mod\u00e9r\u00e9"
                 },
                 "high": {
                   "color": "orange",
                   "index": 2,
-                  "text": "Chargé"
+                  "text": "Charg\u00e9"
                 },
                 "severe": {
                   "color": "red",
                   "index": 3,
-                  "text": "Bloqué"
+                  "text": "Bloqu\u00e9"
                 }
               },
               "type": "value"
@@ -419,7 +419,7 @@
           ]
         }
       ],
-      "title": "Next Hour Congestion Prediction - Abidjan",
+      "title": "Next Hour Congestion Prediction",
       "type": "gauge",
       "description": "ML prediction for congestion level in the next hour"
     },
@@ -630,7 +630,7 @@
           ]
         }
       ],
-      "title": "Multi-Zone Traffic Predictions - Abidjan",
+      "title": "Multi-Zone Traffic Predictions",
       "type": "table",
       "description": "Current predictions for all city zones using ML models"
     },
@@ -781,7 +781,7 @@
           ]
         }
       ],
-      "title": "Predicted Traffic Anomalies - Abidjan",
+      "title": "Predicted Traffic Anomalies",
       "type": "table",
       "description": "ML-detected anomalies predicted for the next 2 hours"
     },
@@ -860,7 +860,7 @@
           ]
         }
       ],
-      "title": "Optimal Route Comparison - Abidjan",
+      "title": "Optimal Route Comparison",
       "type": "piechart",
       "description": "Comparison of predicted travel times by transport mode"
     },
@@ -956,7 +956,7 @@
           ]
         }
       ],
-      "title": "ML Model Performance - Abidjan",
+      "title": "ML Model Performance",
       "type": "stat",
       "description": "Current accuracy of the ML prediction models"
     }
@@ -967,10 +967,7 @@
     "predictions",
     "ml",
     "traffic",
-    "future",
-    "abidjan",
-    "cote-ivoire",
-    "africa"
+    "future"
   ],
   "templating": {
     "list": [
@@ -1036,7 +1033,7 @@
     ]
   },
   "timezone": "",
-  "title": "Future Traffic Predictions with ML - Abidjan",
+  "title": "Future Traffic Predictions with ML",
   "uid": "ml-future-predictions",
   "version": 1,
   "weekStart": ""

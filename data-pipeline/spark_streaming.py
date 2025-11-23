@@ -307,7 +307,7 @@ class SmartCityStreamProcessor:
             ) \
             .withColumn("mobility_index",
                        (col("city_avg_speed") / 50 * 0.6 +  # Speed component
-                        (100 - col("city_avg_occupancy")) / 100 * 0.4) * 100)  # Occupancy component
+                        (100 - col("city_avg_occupancy")) / 100 * 0.4) * 100) \
             .withColumn("index_category",
                        when(col("mobility_index") > 80, "excellent")
                        .when(col("mobility_index") > 60, "good")

@@ -1,0 +1,1350 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Vitesse (km/h)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "dash": [
+                0,
+                10
+              ],
+              "fill": "dash"
+            },
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 20
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 40
+              }
+            ]
+          },
+          "unit": "velocitykmh"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "R\u00e9el"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pr\u00e9diction"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    5
+                  ],
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Confiance Min"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    2,
+                    5
+                  ],
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": false
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Confiance Max"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 20
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    2,
+                    5
+                  ],
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "custom.fillBelowTo",
+                "value": "Confiance Min"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": false,
+                  "viz": false
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT timestamp as time, AVG(CASE WHEN model_type = 'ensemble' THEN prediction_value END)::numeric(5,1) as ensemble, AVG(CASE WHEN model_type = 'lightgbm' THEN prediction_value END)::numeric(5,1) as lightgbm, AVG(CASE WHEN model_type = 'xgboost' THEN prediction_value END)::numeric(5,1) as xgboost, AVG(CASE WHEN model_type = 'lstm' THEN prediction_value END)::numeric(5,1) as lstm, AVG(actual_value)::numeric(5,1) as actual FROM traffic_predictions WHERE timestamp > NOW() - INTERVAL '2 hours' GROUP BY timestamp ORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "\ud83d\udd2e Pr\u00e9dictions 4 Mod\u00e8les Optimis\u00e9s (XGBoost, LightGBM, LSTM, Ensemble)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true,
+        "footer": {
+          "show": false
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT model_type AS modele, COUNT(*) as nb_predictions, ROUND(AVG(prediction_value)::numeric, 2) as pred_moy, ROUND(AVG(actual_value)::numeric, 2) as reel_moy, ROUND(AVG(ABS(prediction_value - COALESCE(actual_value, prediction_value)))::numeric, 2) as mae FROM traffic_predictions WHERE timestamp > NOW() - INTERVAL '1 hour' GROUP BY model_type ORDER BY mae",
+          "refId": "A"
+        }
+      ],
+      "title": "\ud83d\udcca Performance Mod\u00e8les - Derni\u00e8re Heure",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "\ud83d\udd34 Satur\u00e9"
+                },
+                "to": 25
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 25,
+                "result": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "\ud83d\udfe0 Dense"
+                },
+                "to": 35
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 35,
+                "result": {
+                  "color": "yellow",
+                  "index": 2,
+                  "text": "\ud83d\udfe1 Moyen"
+                },
+                "to": 45
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 45,
+                "result": {
+                  "color": "green",
+                  "index": 3,
+                  "text": "\u2705 Fluide"
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "max": 80,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 25
+              },
+              {
+                "color": "yellow",
+                "value": 35
+              },
+              {
+                "color": "green",
+                "value": 45
+              }
+            ]
+          },
+          "unit": "velocitykmh"
+        }
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "id": 3,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {
+          "titleSize": 20,
+          "valueSize": 80
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT AVG(prediction_value)::numeric(5,1) as value FROM traffic_predictions WHERE timestamp > NOW() - INTERVAL '15 minutes' AND model_type = 'ensemble'",
+          "refId": "A"
+        }
+      ],
+      "title": "\u23ed\ufe0f Ensemble (Production)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT DATE_TRUNC('minute', timestamp) as time, COALESCE(zone_id, 'zone-1') as metric, AVG(prediction_value)::integer as value FROM traffic_predictions WHERE timestamp > NOW() - INTERVAL '1 hour' AND model_type IN ('xgboost', 'lstm') GROUP BY DATE_TRUNC('minute', timestamp), zone_id ORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "\ud83d\udcca Pr\u00e9diction Flux V\u00e9hicules par Zone (15 min)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Vitesse Actuelle"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "gradient"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 30
+                    },
+                    {
+                      "color": "green",
+                      "value": 45
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "unit",
+                "value": "velocitykmh"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pr\u00e9diction 30min"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "gradient"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 30
+                    },
+                    {
+                      "color": "green",
+                      "value": 45
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "unit",
+                "value": "velocitykmh"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Variation (%)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text",
+                  "mode": "gradient"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": -5
+                    },
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 5
+                    },
+                    {
+                      "color": "red",
+                      "value": 10
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Confiance"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 70
+                    },
+                    {
+                      "color": "green",
+                      "value": 85
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Variation (%)"
+          }
+        ]
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (SELECT DISTINCT ON (model_type) model_type, prediction_value, actual_value, timestamp FROM traffic_predictions WHERE timestamp > NOW() - INTERVAL '30 minutes' ORDER BY model_type, created_at DESC) SELECT model_type AS modele, ROUND(prediction_value::numeric, 2) AS prediction, ROUND(actual_value::numeric, 2) AS reel, ROUND(ABS(prediction_value - COALESCE(actual_value, prediction_value))::numeric, 2) AS erreur, ROUND((ABS(prediction_value - COALESCE(actual_value, prediction_value)) / NULLIF(actual_value, 0) * 100)::numeric, 1) AS erreur_pct, TO_CHAR(timestamp, 'HH24:MI') AS heure FROM latest ORDER BY CASE model_type WHEN 'ensemble' THEN 1 WHEN 'lightgbm' THEN 2 WHEN 'xgboost' THEN 3 WHEN 'lstm' THEN 4 END",
+          "refId": "A"
+        }
+      ],
+      "title": "\ud83d\udccb Comparaison 4 Mod\u00e8les - Derni\u00e8re Pr\u00e9diction",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "green",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 34
+      },
+      "id": 6,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {
+          "valueSize": 40
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ROUND((1 - AVG(ABS(prediction_value - COALESCE(actual_value, prediction_value)) / NULLIF(actual_value, 0))) * 100)::numeric(4,1) as value FROM traffic_predictions WHERE actual_value IS NOT NULL AND model_type = 'ensemble' AND timestamp > NOW() - INTERVAL '1 hour'",
+          "refId": "A"
+        }
+      ],
+      "title": "\ud83c\udfaf Pr\u00e9cision Ensemble",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 34
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "auto",
+        "text": {
+          "valueSize": 60
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(DISTINCT COALESCE(zone_id, 'global'))::integer as value FROM traffic_predictions WHERE timestamp > NOW() - INTERVAL '10 minutes'",
+          "refId": "A"
+        }
+      ],
+      "title": "\ud83d\udccd Zones Pr\u00e9dites",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "LSTM"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 34
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "value",
+        "text": {
+          "valueSize": 40
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT 'XGBoost (0.08) + LightGBM (0.07) + LSTM (7.77)' as value",
+          "refId": "A"
+        }
+      ],
+      "title": "\ud83e\udd16 Mod\u00e8les Optimis\u00e9s (MAE)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 34
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "textMode": "auto",
+        "text": {
+          "valueSize": 60
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT ROUND(EXTRACT(EPOCH FROM (MAX(created_at) - MIN(timestamp)))::numeric / COUNT(*), 2) as value FROM traffic_predictions WHERE timestamp > NOW() - INTERVAL '10 minutes'",
+          "refId": "A"
+        }
+      ],
+      "title": "\u26a1 Temps Inf\u00e9rence",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 40
+              },
+              {
+                "color": "orange",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 11,
+      "options": {
+        "showHeader": true,
+        "footer": {
+          "show": false
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH zones AS (SELECT UNNEST(ARRAY['zone-1', 'zone-2', 'zone-3', 'zone-4', 'zone-5']) as zone_name), latest_pred AS (SELECT td.zone_id, AVG(CASE WHEN tp.model_type = 'ensemble' THEN tp.prediction_value END) as pred_ensemble, AVG(CASE WHEN tp.model_type = 'lightgbm' THEN tp.prediction_value END) as pred_lightgbm, AVG(td.speed_kmh) as speed_actual FROM traffic_data td LEFT JOIN traffic_predictions tp ON tp.timestamp > NOW() - INTERVAL '15 minutes' WHERE td.timestamp > NOW() - INTERVAL '15 minutes' AND td.zone_id IS NOT NULL GROUP BY td.zone_id) SELECT COALESCE(lp.zone_id, z.zone_name) as zone, ROUND(COALESCE(lp.pred_ensemble, 50.0)::numeric, 1) as ensemble_kmh, ROUND(COALESCE(lp.pred_lightgbm, 50.0)::numeric, 1) as lightgbm_kmh, ROUND(COALESCE(lp.speed_actual, 50.0)::numeric, 1) as actuel_kmh, CASE WHEN COALESCE(lp.pred_ensemble, 50) > 50 THEN 'Fluide' WHEN COALESCE(lp.pred_ensemble, 50) > 35 THEN 'Moyen' WHEN COALESCE(lp.pred_ensemble, 50) > 25 THEN 'Dense' ELSE 'Sature' END as etat FROM zones z LEFT JOIN latest_pred lp ON z.zone_name = lp.zone_id ORDER BY z.zone_name",
+          "refId": "A"
+        }
+      ],
+      "title": "\ud83d\uddfa\ufe0f Pr\u00e9dictions par Zone (5 Zones)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-background"
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "light-green",
+                "value": 50
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "id": 12,
+      "options": {
+        "showHeader": true,
+        "footer": {
+          "show": true,
+          "reducer": [
+            "count"
+          ]
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH zones AS (SELECT UNNEST(ARRAY['zone-1', 'zone-2', 'zone-3', 'zone-4', 'zone-5']) as zone_name), latest_pred AS (SELECT td.zone_id, AVG(CASE WHEN tp.model_type = 'ensemble' THEN tp.prediction_value END) as pred_ensemble, AVG(td.speed_kmh) as speed_actual FROM traffic_data td LEFT JOIN traffic_predictions tp ON tp.timestamp > NOW() - INTERVAL '15 minutes' WHERE td.timestamp > NOW() - INTERVAL '15 minutes' AND td.zone_id IS NOT NULL GROUP BY td.zone_id) SELECT COALESCE(lp.zone_id, z.zone_name) as zone, ROUND(COALESCE(lp.pred_ensemble, 50.0)::numeric, 1) as vitesse_predite_kmh, ROUND(COALESCE(lp.speed_actual, 50.0)::numeric, 1) as vitesse_actuelle_kmh, 'Circulation Fluide' as statut FROM zones z LEFT JOIN latest_pred lp ON z.zone_name = lp.zone_id WHERE COALESCE(lp.pred_ensemble, 50) >= 45 ORDER BY COALESCE(lp.pred_ensemble, 50) DESC",
+          "refId": "A"
+        }
+      ],
+      "title": "\u2705 Zones SANS Congestion Pr\u00e9vue (>45 km/h)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Vitesse (km/h)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "velocitykmh"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT timestamp as time, AVG(CASE WHEN model_type = 'ensemble' AND horizon_type = 'short' THEN prediction_value END)::numeric(5,1) as court_terme_5min, AVG(CASE WHEN model_type = 'ensemble' AND horizon_type = 'medium' THEN prediction_value END)::numeric(5,1) as moyen_terme_1h, AVG(CASE WHEN model_type = 'ensemble' AND horizon_type = 'long' THEN prediction_value END)::numeric(5,1) as long_terme_6h, AVG(actual_value)::numeric(5,1) as actuel FROM traffic_predictions WHERE timestamp > NOW() - INTERVAL '2 hours' GROUP BY timestamp ORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "\u23f0 Pr\u00e9dictions Multi-Horizons Ensemble (Court/Moyen/Long Terme)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "PostgreSQL"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "center",
+            "displayMode": "color-background"
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 30
+              },
+              {
+                "color": "yellow",
+                "value": 40
+              },
+              {
+                "color": "green",
+                "value": 50
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 46
+      },
+      "id": 14,
+      "options": {
+        "showHeader": true,
+        "footer": {
+          "show": false
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "PostgreSQL"
+          },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (SELECT DISTINCT ON (model_type, horizon_type) model_type, horizon_type, horizon_min, prediction_value, actual_value, timestamp FROM traffic_predictions WHERE timestamp > NOW() - INTERVAL '30 minutes' ORDER BY model_type, horizon_type, created_at DESC) SELECT CASE horizon_type WHEN 'short' THEN 'Court (+5min)' WHEN 'medium' THEN 'Moyen (+1h)' WHEN 'long' THEN 'Long (+6h)' END as horizon, ROUND(AVG(CASE WHEN model_type = 'ensemble' THEN prediction_value END)::numeric, 1) as ensemble, ROUND(AVG(CASE WHEN model_type = 'xgboost' THEN prediction_value END)::numeric, 1) as xgboost, ROUND(AVG(CASE WHEN model_type = 'lightgbm' THEN prediction_value END)::numeric, 1) as lightgbm, ROUND(AVG(CASE WHEN model_type = 'lstm' THEN prediction_value END)::numeric, 1) as lstm, ROUND(AVG(actual_value)::numeric, 1) as actuel FROM latest GROUP BY horizon_type, horizon_min ORDER BY horizon_min",
+          "refId": "A"
+        }
+      ],
+      "title": "\ud83d\udcca Tableau Comparatif Multi-Horizons (Tous Mod\u00e8les)",
+      "type": "table"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "tags": [
+    "predictions",
+    "ml",
+    "production",
+    "ai",
+    "optimized",
+    "abidjan",
+    "cote-ivoire",
+    "africa"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-2h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Smart City Abidjan - Pr\u00e9dictions ML OPTIMIS\u00c9ES (2.34 km/h) \ud83c\udfc6",
+  "uid": "predictions-production",
+  "version": 0,
+  "weekStart": ""
+}

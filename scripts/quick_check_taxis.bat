@@ -1,0 +1,6 @@
+@echo off
+echo Taxis derniere minute...
+docker-compose exec -T postgres psql -U smart_city -d smart_city_db -t -c "SELECT COUNT(*) FROM taxis WHERE timestamp > NOW() - INTERVAL '1 minute';"
+echo.
+echo Taxis par status (derniere minute)...
+docker-compose exec -T postgres psql -U smart_city -d smart_city_db -c "SELECT status, COUNT(*) FROM taxis WHERE timestamp > NOW() - INTERVAL '1 minute' GROUP BY status;"

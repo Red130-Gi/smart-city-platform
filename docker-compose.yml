@@ -210,6 +210,27 @@ services:
     networks:
       - smart-city-net
 
+  # Spark Streaming Job (Automatic)
+  spark-streaming:
+    build: ./data-pipeline
+    container_name: spark-streaming
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+      - MONGODB_URI=mongodb://admin:smartcity123@mongodb:27017
+      - SPARK_JOB_TYPE=streaming
+    depends_on:
+      - kafka
+      - postgres
+      - mongodb
+      - spark-master
+      - data-generator
+    restart: unless-stopped
+    volumes:
+      - ./data-pipeline:/opt/spark-apps
+      - ./data:/data
+    networks:
+      - smart-city-net
+
 volumes:
   mongo-data:
   postgres-data:

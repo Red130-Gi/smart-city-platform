@@ -223,6 +223,16 @@ class SmartCityDataGenerator:
                     data['total_spaces'], data['occupied_spaces'], data['available_spaces'],
                     data['occupancy_rate'], data['hourly_rate'], data['status']
                 ))
+            elif table == 'taxis':
+                cursor.execute("""
+                    INSERT INTO taxis
+                    (timestamp, taxi_id, type, status, lat, lon, current_zone, speed_kmh, battery_level)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    data['timestamp'], data['taxi_id'], data['type'], data['status'],
+                    data['location']['lat'], data['location']['lon'],
+                    data['current_zone'], data.get('speed_kmh', 0), data.get('battery_level')
+                ))
             
             self.pg_conn.commit()
         except psycopg2.Error as e:
@@ -262,6 +272,7 @@ class SmartCityDataGenerator:
                 taxi_data = self.taxi_gen.generate_taxi_data(timestamp)
                 for data in taxi_data:
                     self.send_to_kafka('taxi-vtc', data, key=data['taxi_id'])
+                    self.store_in_postgres('taxis', data)
                 print(f"✓ Sent {len(taxi_data)} taxi records")
                 
                 # Generate and send parking data

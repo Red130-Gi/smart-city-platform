@@ -1,0 +1,22 @@
+# Minikube Configuration for Smart City Platform
+# 
+# NOTE: Minikube ne supporte pas --config pour les fichiers YAML
+# 
+# Utilisez plutôt le script :
+#   Windows: start-minikube.bat
+#   Linux/Mac: ./start-minikube.sh
+#
+# Ou la commande directe :
+#   minikube start --cpus=4 --memory=8192 --disk-size=20g --driver=docker --kubernetes-version=v1.28.0
+#
+# Configuration recommandée:
+#   - CPUs: 4
+#   - Memory: 8192 MB (8 GB)
+#   - Disk: 20 GB
+#   - Driver: docker
+#   - Kubernetes: v1.28.0
+#
+# Addons à activer après démarrage:
+#   minikube addons enable ingress
+#   minikube addons enable metrics-server
+#   minikube addons enable dashboard

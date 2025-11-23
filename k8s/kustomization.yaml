@@ -1,0 +1,42 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: smart-city
+
+resources:
+  # Namespace
+  - namespace.yaml
+  
+  # Storage
+  - storage/postgres-pvc.yaml
+  - storage/mongodb-pvc.yaml
+  - storage/kafka-pvc.yaml
+  - storage/grafana-pvc.yaml
+  
+  # Secrets & ConfigMaps
+  - secrets/database-secrets.yaml
+  - secrets/kafka-secrets.yaml
+  - configmaps/app-config.yaml
+  
+  # Deployments
+  - deployments/postgres-deployment.yaml
+  - deployments/mongodb-deployment.yaml
+  - deployments/redis-deployment.yaml
+  - deployments/zookeeper-deployment.yaml
+  - deployments/kafka-deployment.yaml
+  - deployments/api-deployment.yaml
+  - deployments/grafana-deployment.yaml
+  - deployments/spark-streaming-deployment.yaml
+  - deployments/data-generator-deployment.yaml
+  
+  # Services
+  - services/postgres-service.yaml
+  - services/mongodb-service.yaml
+  - services/redis-service.yaml
+  - services/zookeeper-service.yaml
+  - services/kafka-service.yaml
+  - services/api-service.yaml
+  - services/grafana-service.yaml
+  
+  # Ingress
+  - ingress.yaml
